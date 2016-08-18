@@ -207,6 +207,7 @@ nmap <leader>T :enew<cr>
 nmap <leader>vt :vnew<cr>
 nmap <leader>st :new<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
+nmap <leader>bww :bp <BAR> bd! #<cr>
 
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
