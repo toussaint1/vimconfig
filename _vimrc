@@ -233,8 +233,8 @@ nmap <F8> :set ignorecase! ignorecase?<cr>
 " set clipboard=unnamed
 set ignorecase
 
-" no swap file
-set noswapfile
+set backupdir=$VIMRUNTIME/temp//
+set directory=$VIMRUNTIME/temp//
 
 " Other
 " clean BOM - first remove lines with comments and then remove ''
