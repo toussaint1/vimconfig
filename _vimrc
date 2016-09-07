@@ -210,7 +210,7 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 nmap <leader>bww :bp <BAR> bd! #<cr>
 
 " Close all the buffers
-map <leader>ba :1,1000 bd!<cr>
+map <leader>ba :1,$bd!<cr>
 
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
