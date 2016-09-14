@@ -7,83 +7,83 @@ behave mswin
 " Compare function
 set diffexpr=MyDiff()
 function! MyDiff()
-  let opt = '-a --binary '
-  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-  let arg1 = v:fname_in
-  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-  let arg2 = v:fname_new
-  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-  let arg3 = v:fname_out
-  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-  if $VIMRUNTIME =~ ' '
-    if &sh =~ '\<cmd'
-      if empty(&shellxquote)
-        let l:shxq_sav = ''
-        set shellxquote&
-      endif
-      let cmd = '"' . $VIMRUNTIME . '\diff"'
-    else
-      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-    endif
-  else
-    let cmd = $VIMRUNTIME . '\diff'
-  endif
-  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
-  if exists('l:shxq_sav')
-    let &shellxquote=l:shxq_sav
-  endif
+	let opt = '-a --binary '
+	if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+	if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+	let arg1 = v:fname_in
+	if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+	let arg2 = v:fname_new
+	if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+	let arg3 = v:fname_out
+	if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+	if $VIMRUNTIME =~ ' '
+		if &sh =~ '\<cmd'
+			if empty(&shellxquote)
+				let l:shxq_sav = ''
+				set shellxquote&
+			endif
+			let cmd = '"' . $VIMRUNTIME . '\diff"'
+		else
+			let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+		endif
+	else
+		let cmd = $VIMRUNTIME . '\diff'
+	endif
+	silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+	if exists('l:shxq_sav')
+		let &shellxquote=l:shxq_sav
+	endif
 endfunction
 
 " XML formatter
 function! DoFormatXML() range
-  " Save the file type
-  let l:origft = &ft
-  
-  " Clean the file type
-  set ft=
-  
-  " Add fake initial tag (so we can process multiple top-level elements)
-  exe ":let l:beforeFirstLine=" . a:firstline . "-1"
-  if l:beforeFirstLine < 0
-  	let l:beforeFirstLine=0
-  endif
-  exe a:lastline . "put ='</PrettyXML>'"
-  exe l:beforeFirstLine . "put ='<PrettyXML>'"
-  exe ":let l:newLastLine=" . a:lastline . "+2"
-  if l:newLastLine > line('$')
-  	let l:newLastLine=line('$')
-  endif
-  
-  " Remove XML header
-  exe ":" . a:firstline . "," . a:lastline . "s/<\?xml\\_.*\?>\\_s*//e"
-  
-  " Recalculate last line of the edited code
-  let l:newLastLine=search('</PrettyXML>')
-  
-  " Execute external formatter
-  exe ":silent " . a:firstline . "," . l:newLastLine . "!xmllint --noblanks --format --recover -"
-  
-  " Recalculate first and last lines of the edited code
-  let l:newFirstLine=search('<PrettyXML>')
-  let l:newLastLine=search('</PrettyXML>')
-  
-  " Get inner range
-  let l:innerFirstLine=l:newFirstLine+1
-  let l:innerLastLine=l:newLastLine-1
-  
-  " Remove extra unnecessary indentation
-  exe ":silent " . l:innerFirstLine . "," . l:innerLastLine "s/^  //e"
-  
-  " Remove fake tag
-  exe l:newLastLine . "d"
-  exe l:newFirstLine . "d"
-  
-  " Put the cursor at the first line of the edited code
-  exe ":" . l:newFirstLine
-  
-  " Restore the file type
-  exe "set ft=" . l:origft
+	" Save the file type
+	let l:origft = &ft
+
+	" Clean the file type
+	set ft=
+
+	" Add fake initial tag (so we can process multiple top-level elements)
+	exe ":let l:beforeFirstLine=" . a:firstline . "-1"
+	if l:beforeFirstLine < 0
+		let l:beforeFirstLine=0
+	endif
+	exe a:lastline . "put ='</PrettyXML>'"
+	exe l:beforeFirstLine . "put ='<PrettyXML>'"
+	exe ":let l:newLastLine=" . a:lastline . "+2"
+	if l:newLastLine > line('$')
+		let l:newLastLine=line('$')
+	endif
+
+	" Remove XML header
+	exe ":" . a:firstline . "," . a:lastline . "s/<\?xml\\_.*\?>\\_s*//e"
+
+	" Recalculate last line of the edited code
+	let l:newLastLine=search('</PrettyXML>')
+
+	" Execute external formatter
+	exe ":silent " . a:firstline . "," . l:newLastLine . "!xmllint --noblanks --format --recover -"
+
+	" Recalculate first and last lines of the edited code
+	let l:newFirstLine=search('<PrettyXML>')
+	let l:newLastLine=search('</PrettyXML>')
+
+	" Get inner range
+	let l:innerFirstLine=l:newFirstLine+1
+	let l:innerLastLine=l:newLastLine-1
+
+	" Remove extra unnecessary indentation
+	exe ":silent " . l:innerFirstLine . "," . l:innerLastLine "s/^  //e"
+
+	" Remove fake tag
+	exe l:newLastLine . "d"
+	exe l:newFirstLine . "d"
+
+	" Put the cursor at the first line of the edited code
+	exe ":" . l:newFirstLine
+
+	" Restore the file type
+	exe "set ft=" . l:origft
 endfunction
 command! -range=% FormatXML <line1>,<line2>call DoFormatXML()
 
@@ -115,6 +115,13 @@ set guioptions-=r  "remove right-hand scroll bar
 set guioptions-=L  "remove left-hand scroll bar
 
 set number
+set ignorecase
+
+" change temp files location
+set backupdir=$VIMRUNTIME/temp//
+set directory=$VIMRUNTIME/temp//
+
+let $TMP="c:/tmp"
 
 "Pathogen
 execute pathogen#infect()
@@ -155,9 +162,9 @@ nmap <leader>bl :ls<CR>
 
 " Setup some default ignores
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
-  \ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg)$',
-\}
+			\ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
+			\ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg)$',
+			\}
 
 " Use the nearest .git directory as the cwd
 " This makes a lot of sense if you are working on a project that is in version
@@ -230,12 +237,6 @@ nmap <F8> :set ignorecase! ignorecase?<cr>
 :nnoremap <silent> <F9> :!start cmd /c "%:p" & pause<CR>
 :nnoremap <silent> <F10> :!python "%:p"
 
-" set clipboard=unnamed
-set ignorecase
-
-set backupdir=$VIMRUNTIME/temp//
-set directory=$VIMRUNTIME/temp//
-
-" Other
+" Other shortcuts
 " clean BOM - first remove lines with comments and then remove ''
 nmap <leader>bc :silent! g/^.\{-}\/\/.\{-}"/d <ENTER><BAR>:%s/^.\{-}"\(.\{-}\)".\{-}$/\1/g<cr>
