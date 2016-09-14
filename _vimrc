@@ -120,6 +120,7 @@ set ignorecase
 " change temp files location
 set backupdir=$VIMRUNTIME/temp//
 set directory=$VIMRUNTIME/temp//
+set undodir=$VIMRUNTIME/temp//
 
 let $TMP="c:/tmp"
 
